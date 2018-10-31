@@ -9,6 +9,7 @@ uvicorn = "*"
 peewee = "*"
 passlib = "*"
 bcrypt = "*"
+twilio = "*"
 
 [dev-packages]
 black = "*"

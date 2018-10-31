@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1ae8d0e855cb0689664e50d93c0b1cca7faf7062ade8b0137cb71c1614534a3e"
+            "sha256": "df823f81b31b1b1bd9d9200bb242193ce5cda181f9dfff8643e9770118d852fe"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -203,17 +203,39 @@
             ],
             "version": "==2.19"
         },
+        "pyjwt": {
+            "hashes": [
+                "sha256:30b1380ff43b55441283cc2b2676b755cca45693ae3097325dea01f3d110628c",
+                "sha256:4ee413b357d53fd3fb44704577afac88e72e878716116270d722723d65b42176"
+            ],
+            "version": "==1.6.4"
+        },
+        "pysocks": {
+            "hashes": [
+                "sha256:3fe52c55890a248676fd69dc9e3c4e811718b777834bcaab7a8125cf9deac672"
+            ],
+            "markers": "python_version >= '3.0'",
+            "version": "==1.6.8"
+        },
         "python-multipart": {
             "hashes": [
                 "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"
             ],
             "version": "==0.0.5"
         },
+        "pytz": {
+            "hashes": [
+                "sha256:31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca",
+                "sha256:8e0f8568c118d3077b46be7d654cc8167fa916092e28320cde048e54bfc9f1e6"
+            ],
+            "version": "==2018.7"
+        },
         "requests": {
             "hashes": [
                 "sha256:99dcfdaaeb17caf6e526f32b6a7b780461512ab3f1d992187801694cba42770c",
                 "sha256:a84b8c9ab6239b578f22d1c21d51b696dcfe004032bb80ea832398d6909d7279"
             ],
+            "markers": "python_version >= '3.0'",
             "version": "==2.20.0"
         },
         "rx": {
@@ -236,6 +258,14 @@
             ],
             "index": "pypi",
             "version": "==0.6.3"
+        },
+        "twilio": {
+            "hashes": [
+                "sha256:372db8745c923c59ba9c48e44d359e81029bc6be0a6dffd1f1d299406691b1f2",
+                "sha256:c8844de8e1b3e653d970e9f13925de148d13dd78d865a07c91833fd74135e8a4"
+            ],
+            "index": "pypi",
+            "version": "==6.19.2"
         },
         "ujson": {
             "hashes": [
