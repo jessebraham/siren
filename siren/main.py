@@ -4,7 +4,9 @@
 import uvicorn
 
 from starlette.applications import Starlette
+from starlette.routing import Mount, Router
 
+from siren.api import send_api
 from siren.db import open_database_connection, close_database_connection
 
 
@@ -14,6 +16,11 @@ from siren.db import open_database_connection, close_database_connection
 app = Starlette(debug=True)  # FIXME: set debug in a config file
 app.add_event_handler("startup", open_database_connection)
 app.add_event_handler("shutdown", close_database_connection)
+
+# Mount the Send API application to the "/send" endpoint, and register the
+# router with the main application instance.
+router = Router([Mount("/send", app=send_api)])
+app.mount("", router)
 
 
 if __name__ == "__main__":
