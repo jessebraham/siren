@@ -6,12 +6,14 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.responses import UJSONResponse
 
 from siren.tasks import send_email, send_sms
+from siren.utils import get_logger
 
 
-send_api = Starlette(debug=True)
+api_app = Starlette(debug=True)  # FIXME: set debug in a config file
+logger = get_logger()
 
 
-@send_api.route("/email", methods=("POST",))
+@api_app.route("/email", methods=("POST",))
 class EmailEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
@@ -26,7 +28,7 @@ class EmailEndpoint(HTTPEndpoint):
         return UJSONResponse(message, background=task)
 
 
-@send_api.route("/sms", methods=("POST",))
+@api_app.route("/sms", methods=("POST",))
 class SmsEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
