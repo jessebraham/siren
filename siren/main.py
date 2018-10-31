@@ -2,23 +2,39 @@
 # -*- coding: utf-8 -*-
 
 from starlette.applications import Starlette
-from starlette.routing import Mount, Router
+from starlette.routing import Mount, Route, Router
 
-from siren.api import send_api
-from siren.api import api_app
-from siren.db import open_database_connection, close_database_connection
+from siren.db import close_database_connection, open_database_connection
+from siren.endpoints import (
+    EmailEndpoint,
+    SessionEndpoint,
+    SmsEndpoint,
+    UserEndpoint,
+)
 
 
-# When the application's "startup" event is fired, establish a connection with
-# the database. When the "shutdown" event is fired, make sure that we close the
-# previously established connection.
+# Instantiate a new Starlette application, and register event handlers for both
+# the "startup" and "shutdown" events. These event handlers are used to
+# automatically manage the connection to the database.
 app = Starlette(debug=True)  # FIXME: set debug in a config file
 app.add_event_handler("startup", open_database_connection)
 app.add_event_handler("shutdown", close_database_connection)
 
-# Mount the Send API application to the "/send" endpoint, and register the
-# router with the main application instance.
-router = Router([Mount("/send", app=api_app)])
+# Create a separate router for all the "message" endpoints. Broken out to avoid
+# deep nesting.
+message_router = Router(
+    [
+        Route("/email", endpoint=EmailEndpoint, methods=("POST",)),
+        Route("/sms", endpoint=SmsEndpoint, methods=("POST",)),
+    ]
+)
+router = Router(
+    [
+        Mount("/messages", app=message_router),
+        Route("/sessions", endpoint=SessionEndpoint, methods=("GET", "POST")),
+        Route("/users", endpoint=UserEndpoint, methods=("GET", "POST")),
+    ]
+)
 app.mount("", router)
 
 

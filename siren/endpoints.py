@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from starlette.applications import Starlette
 from starlette.background import BackgroundTask
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import UJSONResponse
@@ -9,11 +8,25 @@ from siren.tasks import send_email, send_sms
 from siren.utils import get_logger
 
 
-api_app = Starlette(debug=True)  # FIXME: set debug in a config file
 logger = get_logger()
 
 
-@api_app.route("/email", methods=("POST",))
+class SessionEndpoint(HTTPEndpoint):
+    async def get(self, request):
+        pass
+
+    async def post(self, request):
+        pass
+
+
+class UserEndpoint(HTTPEndpoint):
+    async def get(self, request):
+        pass
+
+    async def post(self, request):
+        pass
+
+
 class EmailEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
@@ -28,7 +41,6 @@ class EmailEndpoint(HTTPEndpoint):
         return UJSONResponse(message, background=task)
 
 
-@api_app.route("/sms", methods=("POST",))
 class SmsEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
