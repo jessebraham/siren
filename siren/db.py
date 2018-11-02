@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import logging
 
 import bcrypt
 
-from peewee import (
-    CharField,
-    DateTimeField,
-    ForeignKeyField,
-    Model,
-    SqliteDatabase,
-)
+from peewee import CharField, DateTimeField, Model, SqliteDatabase
 
 
 db = SqliteDatabase("instance/siren.db")  # FIXME: set path in a config file
+logger = logging.getLogger("siren")
 
 
 class BaseModel(Model):
@@ -61,8 +57,10 @@ class User(BaseModel):
 
 async def open_database_connection():
     db.connect()
+    logger.info("Database connection established.")
     db.create_tables([User])
 
 
 async def close_database_connection():
     db.close()
+    logger.info("Database connection closed.")

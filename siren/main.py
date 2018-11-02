@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+
 from starlette.applications import Starlette
 from starlette.routing import Route, Router
 
@@ -8,6 +10,8 @@ from siren.db import close_database_connection, open_database_connection
 from siren.endpoints import EmailEndpoint, SmsEndpoint
 from siren.middleware import HTTPBasicAuthMiddleware
 
+
+logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
 # Instantiate a new Starlette application and register the HTTP Basic
 # Authentication middleware, which ensures that each request is authenticated
