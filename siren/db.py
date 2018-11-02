@@ -2,7 +2,8 @@
 
 import datetime
 
-from passlib.hash import bcrypt
+import bcrypt
+
 from peewee import (
     CharField,
     DateTimeField,
@@ -39,10 +40,12 @@ class User(BaseModel):
 
     @staticmethod
     def hash_password(password):
-        return bcrypt.hash(password)
+        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     def verify_password(self, password):
-        return bcrypt.verify(self.password, password)
+        return bcrypt.checkpw(
+            password.encode("utf-8"), self.password.encode("utf-8")
+        )
 
     def __repr__(self):
         return f"<User username='{self.username}'>"
