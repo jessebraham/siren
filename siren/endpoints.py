@@ -11,22 +11,6 @@ from siren.utils import get_logger
 logger = get_logger()
 
 
-class SessionEndpoint(HTTPEndpoint):
-    async def get(self, request):
-        pass
-
-    async def post(self, request):
-        pass
-
-
-class UserEndpoint(HTTPEndpoint):
-    async def get(self, request):
-        pass
-
-    async def post(self, request):
-        pass
-
-
 class EmailEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
