@@ -29,7 +29,7 @@ class User(BaseModel):
     @classmethod
     def create(cls, username, password):
         try:
-            cls.select().where((cls.username ** username)).get()
+            cls.select().where(cls.username ** username).get()
         except cls.DoesNotExist:
             user = cls(username=username)
             user.password = user.hash_password(password)
@@ -37,6 +37,14 @@ class User(BaseModel):
             return user
         else:
             raise Exception("User with provided username already exists.")
+
+    @classmethod
+    def authenticate(cls, username, password):
+        try:
+            user = cls.select().where(cls.username ** username).get()
+        except cls.DoesNotExist:
+            return False
+        return user.verify_password(password)
 
     @staticmethod
     def hash_password(password):
