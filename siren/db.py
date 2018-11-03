@@ -6,9 +6,18 @@ import logging
 import bcrypt
 
 from peewee import CharField, DateTimeField, Model, SqliteDatabase
+from playhouse.sqlite_ext import SqliteExtDatabase
 
 
-db = SqliteDatabase("instance/siren.db")  # FIXME: set path in a config file
+# FIXME: set path in a config file
+db = SqliteExtDatabase(
+    "instance/siren.db",
+    pragmas=(
+        ("cache_size", -1024 * 64),  # 64MB page-cache
+        ("journal_mode", "wal"),  # Use WAL-mode
+        ("foreign_keys", 1),  # Enforce FK constraints
+    ),
+)
 logger = logging.getLogger("siren")
 
 
@@ -18,14 +27,14 @@ class BaseModel(Model):
 
 
 class User(BaseModel):
-    username = CharField(max_length=256, unique=True)
+    username = CharField(max_length=64, index=True, unique=True)
     password = CharField(max_length=64)
     created = DateTimeField(default=datetime.datetime.utcnow)
 
     @classmethod
     def create(cls, username, password):
         try:
-            cls.select().where(cls.username ** username).get()
+            cls.get(cls.username ** username)
         except cls.DoesNotExist:
             user = cls(username=username)
             user.password = user.hash_password(password)
@@ -37,7 +46,7 @@ class User(BaseModel):
     @classmethod
     def authenticate(cls, username, password):
         try:
-            user = cls.select().where(cls.username ** username).get()
+            user = cls.get(cls.username ** username)
         except cls.DoesNotExist:
             return False
         return user.verify_password(password)
