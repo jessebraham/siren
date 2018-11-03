@@ -5,7 +5,7 @@ import logging
 
 import bcrypt
 
-from peewee import CharField, DateTimeField, Model, SqliteDatabase
+from peewee import CharField, DateTimeField, ForeignKeyField, Model
 from playhouse.sqlite_ext import SqliteExtDatabase
 
 
@@ -64,10 +64,24 @@ class User(BaseModel):
         return f"<User username='{self.username}'>"
 
 
+class Message(BaseModel):
+    user = ForeignKeyField(User, backref="messages")
+    timestamp = DateTimeField(default=datetime.datetime.utcnow)
+    message_type = CharField(
+        max_length=8, index=True, choices=(("email", "email"), ("sms", "sms"))
+    )
+    sender = CharField(max_length=256)
+    recipient = CharField(max_length=256)
+    sid = CharField(max_length=64, default="")
+
+    def __repr__(self):
+        return f"<Message from='{self.sender}' to='{self.recipient}'>"
+
+
 async def open_database_connection():
     db.connect()
     logger.info("Database connection established.")
-    db.create_tables([User])
+    db.create_tables([User, Message])
 
 
 async def close_database_connection():

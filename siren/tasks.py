@@ -7,6 +7,8 @@ from email.message import EmailMessage
 
 from twilio.rest import Client
 
+from siren.db import Message
+
 
 # TODO: replace environment variables with config file
 # SMTP host and port values are loaded from the OS's environment.
@@ -29,13 +31,17 @@ class EmailDispatcher(object):
         self.username = username
         self.password = password
 
-    def send(self, to_addr, from_addr, subject, body):
+    def send(self, user, to_addr, from_addr, subject, body):
         with smtplib.SMTP(self.host, self.port) as smtp:
             smtp.starttls()
             smtp.login(self.username, self.password)
-            return smtp.send_message(
+            message = smtp.send_message(
                 self.construct_email(to_addr, from_addr, subject, body)
             )
+        Message(
+            user=user, message_type="email", sender=from_addr, recipient=to_addr
+        ).save()
+        return message
 
     def construct_email(self, to_addr, from_addr, subject, body):
         message = EmailMessage()
@@ -52,10 +58,18 @@ class SmsDispatcher(object):
         self.auth_token = auth_token
         self.client = Client(account_sid, auth_token)
 
-    def send(self, to_addr, from_addr, body):
-        return self.client.messages.create(
+    def send(self, user, to_addr, from_addr, body):
+        message = self.client.messages.create(
             to=to_addr, from_=from_addr, body=body
         )
+        Message(
+            user=user,
+            message_type="sms",
+            sender=from_addr,
+            recipient=to_addr,
+            sid=message.sid,
+        ).save()
+        return message
 
 
 email_dispatcher = EmailDispatcher(
@@ -68,9 +82,9 @@ sms_dispatcher = SmsDispatcher(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 # Background Tasks
 
 
-async def send_email(to_addr, from_addr, subject, body):
-    return email_dispatcher.send(to_addr, from_addr, subject, body)
+async def send_email(user, to_addr, from_addr, subject, body):
+    return email_dispatcher.send(user, to_addr, from_addr, subject, body)
 
 
-async def send_sms(to_addr, from_addr, body):
-    return sms_dispatcher.send(to_addr, from_addr, body)
+async def send_sms(user, to_addr, from_addr, body):
+    return sms_dispatcher.send(user, to_addr, from_addr, body)
