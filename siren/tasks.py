@@ -38,9 +38,7 @@ class EmailDispatcher(object):
             message = smtp.send_message(
                 self.construct_email(to_addr, from_addr, subject, body)
             )
-        Message(
-            user=user, message_type="email", sender=from_addr, recipient=to_addr
-        ).save()
+        Message.create(user, "email", from_addr, to_addr)
         return message
 
     def construct_email(self, to_addr, from_addr, subject, body):
@@ -62,13 +60,7 @@ class SmsDispatcher(object):
         message = self.client.messages.create(
             to=to_addr, from_=from_addr, body=body
         )
-        Message(
-            user=user,
-            message_type="sms",
-            sender=from_addr,
-            recipient=to_addr,
-            sid=message.sid,
-        ).save()
+        Message.create(user, "sms", from_addr, to_addr, message.sid)
         return message
 
 

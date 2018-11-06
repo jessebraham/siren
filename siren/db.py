@@ -30,6 +30,7 @@ class User(BaseModel):
     username = CharField(max_length=64, index=True, unique=True)
     password = CharField(max_length=64)
     created = DateTimeField(default=datetime.datetime.utcnow)
+    # TODO: add ability to lock and unlock accounts
 
     @classmethod
     def create(cls, username, password):
@@ -73,6 +74,18 @@ class Message(BaseModel):
     sender = CharField(max_length=256)
     recipient = CharField(max_length=256)
     sid = CharField(max_length=64, default="")
+
+    @classmethod
+    def create(cls, user, message_type, sender, recipient, sid=None):
+        message = Message(
+            user=user,
+            message_type=message_type,
+            sender=sender,
+            recipient=recipient,
+            sid=sid,
+        )
+        message.save()
+        return message
 
     def __repr__(self):
         return f"<Message from='{self.sender}' to='{self.recipient}'>"
