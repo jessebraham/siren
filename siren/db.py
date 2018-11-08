@@ -5,7 +5,13 @@ import logging
 
 import bcrypt
 
-from peewee import CharField, DateTimeField, ForeignKeyField, Model
+from peewee import (
+    BooleanField,
+    CharField,
+    DateTimeField,
+    ForeignKeyField,
+    Model,
+)
 from playhouse.sqlite_ext import SqliteExtDatabase
 
 
@@ -21,6 +27,10 @@ db = SqliteExtDatabase(
 logger = logging.getLogger("siren")
 
 
+# -----------------------------------------------------------------------------
+# Models
+
+
 class BaseModel(Model):
     class Meta:
         database = db
@@ -30,7 +40,8 @@ class User(BaseModel):
     username = CharField(max_length=64, index=True, unique=True)
     password = CharField(max_length=64)
     created = DateTimeField(default=datetime.datetime.utcnow)
-    # TODO: add ability to lock and unlock accounts
+    locked = BooleanField(default=False)
+    locked_on = DateTimeField(null=True)
 
     @classmethod
     def create(cls, username, password):
@@ -50,7 +61,7 @@ class User(BaseModel):
             user = cls.get(cls.username ** username)
         except cls.DoesNotExist:
             return False
-        return user.verify_password(password)
+        return not user.locked and user.verify_password(password)
 
     @staticmethod
     def hash_password(password):
@@ -60,6 +71,16 @@ class User(BaseModel):
         return bcrypt.checkpw(
             password.encode("utf-8"), self.password.encode("utf-8")
         )
+
+    def lock(self):
+        self.locked = True
+        self.locked_on = datetime.datetime.utcnow()
+        return self.save()
+
+    def unlock(self):
+        self.locked = False
+        self.locked_on = None
+        return self.save()
 
     def __repr__(self):
         return f"<User username='{self.username}'>"
@@ -77,7 +98,7 @@ class Message(BaseModel):
 
     @classmethod
     def create(cls, user, message_type, sender, recipient, sid=None):
-        message = Message(
+        message = cls(
             user=user,
             message_type=message_type,
             sender=sender,
@@ -89,6 +110,10 @@ class Message(BaseModel):
 
     def __repr__(self):
         return f"<Message from='{self.sender}' to='{self.recipient}'>"
+
+
+# -----------------------------------------------------------------------------
+# Event Handlers
 
 
 async def open_database_connection():
