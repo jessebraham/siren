@@ -4,6 +4,7 @@
 import logging
 
 from starlette.applications import Starlette
+from starlette.middleware.sessions import SessionMiddleware
 from starlette.routing import Route, Router
 
 from siren.db import close_database_connection, open_database_connection
@@ -17,6 +18,7 @@ logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 # Authentication middleware, which ensures that each request is authenticated
 # with a valid username and password.
 app = Starlette(debug=True)  # FIXME: set debug in a config file
+app.add_middleware(SessionMiddleware, secret_key="super-secret-key")
 app.add_middleware(HTTPBasicAuthMiddleware)
 
 # Register event handlers for both the "startup" and "shutdown" events. These

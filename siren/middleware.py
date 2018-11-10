@@ -25,7 +25,7 @@ class HTTPBasicAuthMiddleware(BaseHTTPMiddleware):
                 "Unauthorized: Access is denied due to invalid credentials"
             )
 
-        scope["current_user"] = username
+        scope.session["current_user"] = username
         return self.app(scope)
 
     def header_value(self, scope, header):
