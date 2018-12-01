@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 import os
 import smtplib
 
 from email.message import EmailMessage
 
 from twilio.rest import Client
-
-from siren.db import Message
 
 
 # TODO: replace environment variables with config file
@@ -24,21 +23,25 @@ TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 
 
-class EmailDispatcher(object):
+class EmailDispatcher:
     def __init__(self, host, port, username, password):
         self.host = host
         self.port = port
         self.username = username
         self.password = password
 
-    def send(self, user, to_addr, from_addr, subject, body):
+    def send(self, user, msg, to_addr, from_addr, subject, body):
         with smtplib.SMTP(self.host, self.port) as smtp:
             smtp.starttls()
             smtp.login(self.username, self.password)
             message = smtp.send_message(
                 self.construct_email(to_addr, from_addr, subject, body)
             )
-        Message.create(user, "email", from_addr, to_addr)
+
+        msg.status = "delivered"
+        msg.delivered = datetime.datetime.utcnow()
+        msg.save()
+
         return message
 
     def construct_email(self, to_addr, from_addr, subject, body):
@@ -50,17 +53,22 @@ class EmailDispatcher(object):
         return message
 
 
-class SmsDispatcher(object):
+class SmsDispatcher:
     def __init__(self, account_sid, auth_token):
         self.account_sid = account_sid
         self.auth_token = auth_token
         self.client = Client(account_sid, auth_token)
 
-    def send(self, user, to_addr, from_addr, body):
+    def send(self, user, msg, to_addr, from_addr, body):
         message = self.client.messages.create(
             to=to_addr, from_=from_addr, body=body
         )
-        Message.create(user, "sms", from_addr, to_addr, message.sid)
+
+        msg.status = "delivered"
+        msg.delivered = datetime.datetime.utcnow()
+        msg.sid = message.sid
+        msg.save()
+
         return message
 
 
@@ -74,9 +82,9 @@ sms_dispatcher = SmsDispatcher(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 # Background Tasks
 
 
-async def send_email(user, to_addr, from_addr, subject, body):
-    return email_dispatcher.send(user, to_addr, from_addr, subject, body)
+async def send_email(user, msg, to_addr, from_addr, subject, body):
+    return email_dispatcher.send(user, msg, to_addr, from_addr, subject, body)
 
 
-async def send_sms(user, to_addr, from_addr, body):
-    return sms_dispatcher.send(user, to_addr, from_addr, body)
+async def send_sms(user, msg, to_addr, from_addr, body):
+    return sms_dispatcher.send(user, msg, to_addr, from_addr, body)

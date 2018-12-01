@@ -88,28 +88,37 @@ class User(BaseModel):
 
 class Message(BaseModel):
     user = ForeignKeyField(User, backref="messages")
-    timestamp = DateTimeField(default=datetime.datetime.utcnow)
     message_type = CharField(
         max_length=8, index=True, choices=(("email", "email"), ("sms", "sms"))
     )
     sender = CharField(max_length=256)
     recipient = CharField(max_length=256)
-    sid = CharField(max_length=64, default="")
+    status = CharField(
+        max_length=16,
+        index=True,
+        choices=(("queued", "queued"), ("delivered", "delivered")),
+        default="queued",
+    )
+    queued = DateTimeField(default=datetime.datetime.utcnow)
+    delivered = DateTimeField(null=True)
+    sid = CharField(max_length=64, null=True)
 
     @classmethod
-    def create(cls, user, message_type, sender, recipient, sid=None):
+    def create(cls, user, message_type, sender, recipient):
         message = cls(
             user=user,
             message_type=message_type,
             sender=sender,
             recipient=recipient,
-            sid=sid,
         )
         message.save()
         return message
 
     def __repr__(self):
-        return f"<Message from='{self.sender}' to='{self.recipient}'>"
+        return (
+            f"<Message type='{self.message_type}' "
+            f"from='{self.sender}' to='{self.recipient}'>"
+        )
 
 
 # -----------------------------------------------------------------------------
