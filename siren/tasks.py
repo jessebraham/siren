@@ -9,20 +9,6 @@ from email.message import EmailMessage
 from twilio.rest import Client
 
 
-# TODO: replace environment variables with config file
-# SMTP host and port values are loaded from the OS's environment.
-SMTP_HOST = os.environ.get("SIREN_SMTP_HOST")
-SMTP_PORT = os.environ.get("SIREN_SMTP_PORT")
-SMTP_USERNAME = os.environ.get("SIREN_SMTP_USERNAME")
-SMTP_PASSWORD = os.environ.get("SIREN_SMTP_PASSWORD")
-
-# TODO: replace environment variables with config file
-# Twilio "account_sid" and "auth_token" values are loaded from the OS's
-# environment. If these aren't present the requests will fail to authenticate.
-TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
-
-
 class EmailDispatcher:
     def __init__(self, host, port, username, password):
         self.host = host
@@ -72,14 +58,24 @@ class SmsDispatcher:
         return message
 
 
-email_dispatcher = EmailDispatcher(
-    SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD
-)
-sms_dispatcher = SmsDispatcher(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
-
 # -----------------------------------------------------------------------------
 # Background Tasks
+
+config = {
+    "email": {
+        "host": os.environ.get("SIREN_SMTP_HOST"),
+        "port": os.environ.get("SIREN_SMTP_PORT"),
+        "username": os.environ.get("SIREN_SMTP_USERNAME"),
+        "password": os.environ.get("SIREN_SMTP_PASSWORD"),
+    },
+    "sms": {
+        "account_sid": os.environ.get("TWILIO_ACCOUNT_SID"),
+        "auth_token": os.environ.get("TWILIO_AUTH_TOKEN"),
+    },
+}
+
+email_dispatcher = EmailDispatcher(**config["email"])
+sms_dispatcher = SmsDispatcher(**config["sms"])
 
 
 async def send_email(user, msg, to_addr, from_addr, subject, body):
