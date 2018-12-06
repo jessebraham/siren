@@ -59,9 +59,7 @@ def test_user_repr(test_database):
 
 def test_message_create(test_database):
     user = User.create("hjfarnsworth", "pazuzu3")
-    message = Message.create(
-        user, "sms", "+12225551234", "+12225555678", "abcdef123456"
-    )
+    message = Message.create(user, "sms", "+12225551234", "+12225555678")
     assert message is not None
     assert message.user == user
     assert message.message_type == "sms"
@@ -69,9 +67,8 @@ def test_message_create(test_database):
 
 def test_message_repr(test_database):
     user = User.create("troy_mcclure", "earwigs,ew!")
-    message = Message.create(
-        user, "sms", "+12225551234", "+12225555678", "abcdef123456"
-    )
+    message = Message.create(user, "sms", "+12225551234", "+12225555678")
     assert (
-        message.__repr__() == "<Message from='+12225551234' to='+12225555678'>"
+        message.__repr__()
+        == "<Message type='sms' from='+12225551234' to='+12225555678'>"
     )
