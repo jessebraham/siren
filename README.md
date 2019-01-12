@@ -46,6 +46,6 @@ Siren exposes the following endpoints:
 - [ ] Write documentation and tests  
 - [x] ~~Find a simpler way to configure SMTP and Twilio API~~  
 - [ ] Improve authentication/session handling  
-- [ ] Passing around the `Message` object is less than ideal; fix it  
+- [x] ~~Passing around the `Message` object is less than ideal; fix it~~  
 - [ ] Implement configurable rate limiting  
 - [ ] Use CORS middleware?  
