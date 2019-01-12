@@ -6,6 +6,7 @@ import logging
 from starlette.applications import Starlette
 from starlette.routing import Route, Router
 
+from siren import settings
 from siren.db import close_database_connection, open_database_connection
 from siren.endpoints import EmailEndpoint, SmsEndpoint
 from siren.middleware import HTTPBasicAuthMiddleware
@@ -14,8 +15,9 @@ from siren.middleware import HTTPBasicAuthMiddleware
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
 # Instantiate a new Starlette application.
-# FIXME: set arguments in a config file
-app = Starlette(debug=True)
+app = Starlette()
+app.debug = settings.DEBUG
+app.testing = settings.TESTING
 
 # Register the HTTP Basic Authentication middleware, which ensures that each
 # request is authenticated with a valid username and password.

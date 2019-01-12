@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import os
 import smtplib
 
 from email.message import EmailMessage
 
 from twilio.rest import Client
+
+from siren import settings
 
 
 class EmailDispatcher:
@@ -63,14 +64,14 @@ class SmsDispatcher:
 
 config = {
     "email": {
-        "host": os.environ.get("SIREN_SMTP_HOST"),
-        "port": os.environ.get("SIREN_SMTP_PORT"),
-        "username": os.environ.get("SIREN_SMTP_USERNAME"),
-        "password": os.environ.get("SIREN_SMTP_PASSWORD"),
+        "host": settings.SIREN_SMTP_HOST,
+        "port": settings.SIREN_SMTP_PORT,
+        "username": settings.SIREN_SMTP_USERNAME,
+        "password": settings.SIREN_SMTP_PASSWORD,
     },
     "sms": {
-        "account_sid": os.environ.get("TWILIO_ACCOUNT_SID"),
-        "auth_token": os.environ.get("TWILIO_AUTH_TOKEN"),
+        "account_sid": settings.TWILIO_ACCOUNT_SID,
+        "auth_token": settings.TWILIO_AUTH_TOKEN,
     },
 }
 

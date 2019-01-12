@@ -2,7 +2,6 @@
 
 import datetime
 import logging
-import os
 
 import bcrypt
 
@@ -15,11 +14,11 @@ from peewee import (
 )
 from playhouse.sqlite_ext import SqliteExtDatabase
 
+from siren import settings
 
-SIREN_DB_PATH = os.environ.get("SIREN_DB_PATH", "instance/siren.db")
 
 db = SqliteExtDatabase(
-    SIREN_DB_PATH,
+    settings.DATABASE_PATH,
     pragmas=(
         ("cache_size", -1024 * 64),  # 64MB page-cache
         ("journal_mode", "wal"),  # Use WAL-mode
