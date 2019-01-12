@@ -22,7 +22,7 @@ PyJWT==1.7.1
 PySocks==1.6.8
 python-multipart==0.0.5
 pytz==2018.9
-PyYAML==3.13
+PyYAML>=4.2b1
 requests==2.21.0
 Rx==1.6.1
 six==1.12.0
