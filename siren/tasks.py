@@ -20,17 +20,26 @@ class EmailDispatcher:
         self.from_addr = from_addr
 
     def send(self, user, to_addr, subject, body):
+        msg_model = Message.create(user, "email", self.from_addr, to_addr)
+
+        message = self.smtp_authenticate_and_send(to_addr, subject, body)
+        if message is not None:
+            msg_model.status = "delivered"
+            msg_model.delivered = datetime.datetime.utcnow()
+            msg_model.save()
+
+        return message
+
+    def smtp_authenticate_and_send(self, to_addr, subject, body):
         with smtplib.SMTP(self.host, self.port) as smtp:
             smtp.starttls()
             smtp.login(self.username, self.password)
-            message = smtp.send_message(
-                self.construct_email(to_addr, subject, body)
-            )
 
-        msg = Message.create(user, "email", self.from_addr, to_addr)
-        msg.status = "delivered"
-        msg.delivered = datetime.datetime.utcnow()
-        msg.save()
+            try:
+                email = self.construct_email(to_addr, subject, body)
+                message = smtp.send_message(email)
+            except Exception:
+                message = None
 
         return message
 
@@ -51,15 +60,16 @@ class SmsDispatcher:
         self.client = Client(account_sid, auth_token)
 
     def send(self, user, to_addr, body):
+        msg = Message.create(user, "sms", self.from_number, to_addr)
+
         message = self.client.messages.create(
             to=to_addr, from_=self.from_number, body=body
         )
-
-        msg = Message.create(user, "sms", self.from_number, to_addr)
-        msg.status = "delivered"
-        msg.delivered = datetime.datetime.utcnow()
-        msg.sid = message.sid
-        msg.save()
+        if message is not None:
+            msg.status = "delivered"
+            msg.delivered = datetime.datetime.utcnow()
+            msg.sid = message.sid
+            msg.save()
 
         return message
 
