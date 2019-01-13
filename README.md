@@ -1,5 +1,7 @@
 # Siren
 
+[![Build Status](https://travis-ci.org/jessebraham/siren.svg?branch=master)](https://travis-ci.org/jessebraham/siren)[![Coverage Status](https://coveralls.io/repos/github/jessebraham/siren/badge.svg?branch=master)](https://coveralls.io/github/jessebraham/siren?branch=master)
+
 **Siren** provides an incredibly basic API for sending email and SMS messages via HTTP requests, authorized using HTTP Basic Authentication. Email are sent via a user-configured SMTP server, and SMS are sent using [Twilio](https://www.twilio.com/). Additional services may be supported in the future.
 
 - - -
@@ -18,34 +20,39 @@ The following packages are used for development and testing:
 
 Siren expects a number of environment variables to be set in order to send messages.
 
+> DATABASE_PATH
+
 For email:
 
 > SIREN_SMTP_HOST  
 > SIREN_SMTP_PORT  
 > SIREN_SMTP_USERNAME  
-> SIREN_SMTP_PASSWORD
+> SIREN_SMTP_PASSWORD  
+> SIREN_SMTP_FROM_ADDR  
 
 For SMS:
 
 > TWILIO_ACCOUNT_SID  
-> TWILIO_AUTH_TOKEN
+> TWILIO_AUTH_TOKEN  
+> TWILIO_FROM_NUMBER  
 
 
 ## Endpoints
 
 Siren exposes the following endpoints:
 
-| Action             | Parameters                              |
-|:-------------------|:----------------------------------------|
-| `POST /send/email` | `{ from_addr, to_addr, subject, body }` |
-| `POST /send/sms`   | `{ from_addr, to_addr, body }`          |
+| Action             | Parameters                   |
+|:-------------------|:-----------------------------|
+| `POST /send/email` | `{ to_addr, subject, body }` |
+| `POST /send/sms`   | `{ to_addr, body }`          |
 
 
 ## To Do
 
 - [ ] Write documentation and tests  
+- [ ] Event handlers have stopped firing; fix them  
 - [x] ~~Find a simpler way to configure SMTP and Twilio API~~  
-- [ ] Improve authentication/session handling  
 - [x] ~~Passing around the `Message` object is less than ideal; fix it~~  
-- [ ] Implement configurable rate limiting  
+- [ ] Implement configurable rate limiting?  
+- [ ] Improve authentication/session handling?  
 - [ ] Use CORS middleware?  
