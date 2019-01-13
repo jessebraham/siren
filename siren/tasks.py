@@ -52,7 +52,7 @@ class SmsDispatcher:
 
     def send(self, user, to_addr, body):
         message = self.client.messages.create(
-            to=to_addr, from_=self.from_addr, body=body
+            to=to_addr, from_=self.from_number, body=body
         )
 
         msg = Message.create(user, "sms", self.from_number, to_addr)
