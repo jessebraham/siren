@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from starlette.background import BackgroundTask
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import UJSONResponse
 
 from siren.db import User
 from siren.tasks import send_email, send_sms
-
-
-logger = logging.getLogger("siren")
 
 
 class EmailEndpoint(HTTPEndpoint):

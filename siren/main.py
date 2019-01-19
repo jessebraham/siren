@@ -15,14 +15,19 @@ from siren.middleware import BasicAuthBackend
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
-# Instantiate a new Starlette application.
 app = Starlette()
 app.debug = settings.DEBUG
 app.testing = settings.TESTING
 
-# Register the HTTP Basic Authentication middleware, which ensures that each
-# request is authenticated with a valid username and password.
-app.add_middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
+app.mount(
+    "/send",
+    Router(
+        [
+            Route("/email", endpoint=EmailEndpoint, methods=("POST",)),
+            Route("/sms", endpoint=SmsEndpoint, methods=("POST",)),
+        ]
+    ),
+)
 
 # Register event handlers for both the "startup" and "shutdown" events. These
 # event handlers are used to automatically manage the connection to the
@@ -30,13 +35,10 @@ app.add_middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 app.add_event_handler("startup", open_database_connection)
 app.add_event_handler("shutdown", close_database_connection)
 
-router = Router(
-    [
-        Route("/email", endpoint=EmailEndpoint, methods=("POST",)),
-        Route("/sms", endpoint=SmsEndpoint, methods=("POST",)),
-    ]
-)
-app.mount("/send", router)
+# Use the built-in Authentication Middleware, utilizing the custom HTTP Basic
+# Authentication backend from `middleware.py`. Using this middleware, every
+# request requires a username and password to be provided.
+app.add_middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 
 
 if __name__ == "__main__":

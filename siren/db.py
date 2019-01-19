@@ -28,10 +28,6 @@ db = SqliteExtDatabase(
 logger = logging.getLogger("siren")
 
 
-# -----------------------------------------------------------------------------
-# Models
-
-
 class BaseModel(Model):
     class Meta:
         database = db
@@ -120,10 +116,6 @@ class Message(BaseModel):
             f"<Message type='{self.message_type}' "
             f"from='{self.sender}' to='{self.recipient}'>"
         )
-
-
-# -----------------------------------------------------------------------------
-# Event Handlers
 
 
 async def open_database_connection():

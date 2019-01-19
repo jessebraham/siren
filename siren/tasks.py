@@ -74,26 +74,8 @@ class SmsDispatcher:
         return message
 
 
-# -----------------------------------------------------------------------------
-# Background Tasks
-
-config = {
-    "email": {
-        "host": settings.SIREN_SMTP_HOST,
-        "port": settings.SIREN_SMTP_PORT,
-        "username": settings.SIREN_SMTP_USERNAME,
-        "password": settings.SIREN_SMTP_PASSWORD,
-        "from_addr": settings.SIREN_SMTP_FROM_ADDR,
-    },
-    "sms": {
-        "account_sid": settings.TWILIO_ACCOUNT_SID,
-        "auth_token": settings.TWILIO_AUTH_TOKEN,
-        "from_number": settings.TWILIO_FROM_NUMBER,
-    },
-}
-
-email_dispatcher = EmailDispatcher(**config["email"])
-sms_dispatcher = SmsDispatcher(**config["sms"])
+email_dispatcher = EmailDispatcher(**settings.siren_config["email"])
+sms_dispatcher = SmsDispatcher(**settings.siren_config["sms"])
 
 
 async def send_email(user, to_addr, subject, body):
