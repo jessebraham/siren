@@ -16,7 +16,7 @@ logger = logging.getLogger("siren")
 class EmailEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
-        user = User.get(User.username == request.get("current_user"))
+        user = User.get(User.username == request.user.username)
 
         task = BackgroundTask(
             send_email,
@@ -32,7 +32,7 @@ class EmailEndpoint(HTTPEndpoint):
 class SmsEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
-        user = User.get(User.username == request.get("current_user"))
+        user = User.get(User.username == request.user.username)
 
         task = BackgroundTask(
             send_sms, user=user, to_addr=data["to_addr"], body=data["body"]

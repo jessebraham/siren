@@ -4,12 +4,13 @@
 import logging
 
 from starlette.applications import Starlette
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.routing import Route, Router
 
 from siren import settings
 from siren.db import close_database_connection, open_database_connection
 from siren.endpoints import EmailEndpoint, SmsEndpoint
-from siren.middleware import HTTPBasicAuthMiddleware
+from siren.middleware import BasicAuthBackend
 
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
@@ -21,7 +22,7 @@ app.testing = settings.TESTING
 
 # Register the HTTP Basic Authentication middleware, which ensures that each
 # request is authenticated with a valid username and password.
-app.add_middleware(HTTPBasicAuthMiddleware)
+app.add_middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 
 # Register event handlers for both the "startup" and "shutdown" events. These
 # event handlers are used to automatically manage the connection to the

@@ -43,6 +43,7 @@ Configuration is performed via Environment Variables, following [the twelve-fact
 $ cp .env.example instance/.env
 $ # modify contents of instance/.env
 $ source instance/.env
+$ python -m siren.main
 ```
 
 
@@ -50,7 +51,8 @@ $ source instance/.env
 
 - [x] ~~Find a simpler way to configure SMTP and Twilio API~~  
 - [x] ~~Passing around the `Message` object is less than ideal; fix it~~  
-- [ ] Event handlers have stopped firing; fix them  
+- [x] ~~Event handlers have stopped firing; fix them~~  
+- [ ] Create a `Dockerfile`  
 - [ ] Write documentation, more tests  
 - [ ] Implement configurable rate limiting?  
 - [ ] Use CORS middleware?  

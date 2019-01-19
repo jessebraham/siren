@@ -13,10 +13,11 @@ PySocks==1.6.8
 pytz==2018.9
 requests==2.21.0
 six==1.12.0
-starlette==0.9.9
+starlette==0.9.10
+toml==0.10.0
 twilio==6.23.1
 ujson==1.35
 urllib3==1.24.1
-uvicorn==0.3.24
+uvicorn==0.3.25
 uvloop==0.11.3
 websockets==7.0
