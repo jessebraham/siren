@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pytest --cov-report term-missing --cov=siren tests/

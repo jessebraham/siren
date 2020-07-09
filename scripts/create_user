@@ -2,7 +2,7 @@
 #
 # Create a new user from the provided username and password positional arguments.
 #
-#   ex.) bash scripts/create_user.sh hjfarnsworth pazuzu3
+#   ex.) bash scripts/create_user hjfarnsworth pazuzu3
 
 USERNAME="$1"
 PASSWORD="$2"
