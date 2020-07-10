@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from starlette.background import BackgroundTask
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import UJSONResponse
@@ -11,7 +9,7 @@ from siren.tasks import send_email, send_sms
 class EmailEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
-        user = User.get(User.username == request.user.username)
+        user = User.get(User.username ** request.user.username)
 
         task = BackgroundTask(
             send_email,
@@ -27,7 +25,7 @@ class EmailEndpoint(HTTPEndpoint):
 class SmsEndpoint(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
-        user = User.get(User.username == request.user.username)
+        user = User.get(User.username ** request.user.username)
 
         task = BackgroundTask(
             send_sms, user=user, to_addr=data["to_addr"], body=data["body"]

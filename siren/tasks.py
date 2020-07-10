@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 import smtplib
-
 from email.message import EmailMessage
 
 from twilio.rest import Client
@@ -24,9 +21,7 @@ class EmailDispatcher:
 
         message = self.smtp_authenticate_and_send(to_addr, subject, body)
         if message is not None:
-            msg_model.status = "delivered"
-            msg_model.delivered = datetime.datetime.utcnow()
-            msg_model.save()
+            msg_model.deliver()
 
         return message
 
@@ -66,10 +61,8 @@ class SmsDispatcher:
             to=to_addr, from_=self.from_number, body=body
         )
         if message is not None:
-            msg.status = "delivered"
-            msg.delivered = datetime.datetime.utcnow()
             msg.sid = message.sid
-            msg.save()
+            msg.deliver()
 
         return message
 

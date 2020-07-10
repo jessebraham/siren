@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import logging
 
@@ -11,7 +10,6 @@ from siren import settings
 from siren.db import close_database_connection, open_database_connection
 from siren.endpoints import EmailEndpoint, SmsEndpoint
 from siren.middleware import BasicAuthBackend
-
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
@@ -44,4 +42,9 @@ app.add_middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    config = {
+        "host": "0.0.0.0",
+        "port": 8000,
+        "log_level": "debug" if settings.DEBUG else "info",
+    }
+    uvicorn.run(app, **config)

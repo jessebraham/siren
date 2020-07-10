@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 import logging
 
 import bcrypt
-
 from peewee import (
     BooleanField,
     CharField,
@@ -15,7 +12,6 @@ from peewee import (
 from playhouse.sqlite_ext import SqliteExtDatabase
 
 from siren import settings
-
 
 db = SqliteExtDatabase(
     settings.DATABASE_PATH,
@@ -110,6 +106,11 @@ class Message(BaseModel):
         )
         message.save()
         return message
+
+    def deliver(self):
+        self.status = "delivered"
+        self.delivered = datetime.datetime.utcnow()
+        self.save()
 
     def __repr__(self):
         return (

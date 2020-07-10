@@ -1,13 +1,18 @@
-# -*- coding: utf-8 -*-
+"""
+The `BasicAuthBackend` class is taken essentially verbatim from the Starlette
+documentation.
+
+https://www.starlette.io/authentication/
+"""
 
 import base64
 import binascii
 
 from starlette.authentication import (
+    AuthCredentials,
     AuthenticationBackend,
     AuthenticationError,
     SimpleUser,
-    AuthCredentials,
 )
 
 from siren.db import User
