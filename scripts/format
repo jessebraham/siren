@@ -1,0 +1,4 @@
+#!/bin/sh
+
+black siren/ tests/
+isort --line-length=78 --profile=black siren/ tests/

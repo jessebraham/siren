@@ -7,6 +7,10 @@ python:
 install:
   - pip install -r requirements-dev.txt
   - pip install coveralls
+# ensure formatting prior to testing
+before_script:
+  - black --check siren/ tests/
+  - isort --check-only --line-length=78 --profile=black siren/ tests/
 # command to run tests
 script:
   - pytest tests/
